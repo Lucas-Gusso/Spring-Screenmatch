@@ -7,8 +7,10 @@ import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConverteDados;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Prinpal {
     private Scanner leitura = new Scanner(System.in);
@@ -35,14 +37,26 @@ public class Prinpal {
 
 		temporadas.forEach(System.out::println);
 
-//        for(int i = 0; i < dados.totalTemporadas(); i++) {
-//            List<DadosEpisodio> episodiosTemporada = temporadas.get(i).episodios();
-//
-//            for(int j = 0; j< episodiosTemporada.size(); j++)
-//                System.out.println(episodiosTemporada.get(j).titulo());
-//
-//        }
+        for(int i = 0; i < dados.totalTemporadas(); i++) {
+            List<DadosEpisodio> episodiosTemporada = temporadas.get(i).episodios();
+
+            for(int j = 0; j< episodiosTemporada.size(); j++)
+                System.out.println(episodiosTemporada.get(j).titulo());
+
+        }
 
         temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+
+        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream())
+                .toList();
+//                .collect(Collectors.toList()); -> lista modificavel
+
+        System.out.println();
+        System.out.println("Top 5 episódios: ");
+        dadosEpisodios.stream().filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+                .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
+                .limit(5)
+                .forEach(System.out::println);
     }
 }
